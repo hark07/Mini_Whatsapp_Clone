@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mini WhatsApp</title>
+  <style>
+    body { font-family: 'Arial', sans-serif; background-color: #e5ddd5; margin: 0; padding: 0; }
+    .chat-app { max-width: 600px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; border: 1px solid #ccc; background-color: #f0f0f0; }
+    .header { background-color: #075e54; color: #fff; padding: 15px; text-align: center; font-size: 1.5em; font-weight: bold; }
+    .chat-container { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; }
+    .chat-bubble { padding: 10px 15px; border-radius: 20px; margin: 8px 0; max-width: 75%; position: relative; word-wrap: break-word; box-shadow: 0 1px 2px rgba(0,0,0,0.2); animation: fadeIn 0.3s ease; }
+    .chat-bubble.from { background-color: #dcf8c6; align-self: flex-start; }
+    .chat-bubble.to { background-color: #fff; align-self: flex-end; }
+    .chat-bubble .from-name { font-weight: bold; color: #128c7e; margin-bottom: 3px; }
+    .chat-bubble .to-name { font-size: 0.9em; color: #555; margin-bottom: 3px; }
+    .chat-bubble .msg { margin-bottom: 3px; color: #000; }
+    .chat-bubble .time { font-size: 0.75em; color: #777; text-align: right; }
+    .chat-container::-webkit-scrollbar { width: 6px; }
+    .chat-container::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.2); border-radius: 3px; }
+    .chat-input { display: flex; padding: 10px; background-color: #f0f0f0; border-top: 1px solid #ccc; }
+    .chat-input input { flex: 1; padding: 10px; border-radius: 20px; border: 1px solid #ccc; outline: none; }
+    .chat-input button { margin-left: 10px; padding: 10px 20px; border-radius: 20px; border: none; background-color: #128c7e; color: white; cursor: pointer; }
+    .chat-input button:hover { background-color: #075e54; }
+    @keyframes fadeIn { from {opacity:0; transform: translateY(10px);} to {opacity:1; transform: translateY(0);} }
+  </style>
+</head>
+<body>
+
+<div class="chat-app">
+  <div class="header">Mini WhatsApp</div>
+
+  <div style="text-align:center; margin:10px 0;">
+    <form action="/chats/new" method="GET">
+      <button type="submit">New Chat</button>
+    </form>
+  </div>
+
+  <div class="chat-container">
+    <% chats.forEach(chat => { %>
+      <div class="chat-bubble <% if(chat.from === 'Harish'){ %>from<% } else { %>to<% } %>">
+        <p class="from-name">From: <%= chat.from %></p>
+        <p class="to-name">To: <%= chat.to %></p>
+        <p class="msg"><%= chat.msg %></p>
+        <p class="time"><%= chat.created_at.toLocaleString() %></p>
+
+        <!-- Edit/Delete -->
+        <div style="margin-top:5px;">
+          <form action="/chats/<%= chat._id %>/delete" method="POST" style="display:inline;">
+            <button style="background:red; color:white; border:none; padding:3px 8px; border-radius:5px;">Delete</button>
+          </form>
+          <a href="/chats/<%= chat._id %>/edit">
+            <button style="background:orange; color:white; border:none; padding:3px 8px; border-radius:5px;">Edit</button>
+          </a>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="chat-input">
+    <form action="/chats/send" method="POST" style="display:flex; width:100%;">
+      <input type="text" name="msg" placeholder="Type a message..." required />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>
